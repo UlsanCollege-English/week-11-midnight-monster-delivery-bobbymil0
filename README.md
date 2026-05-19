@@ -3,82 +3,52 @@
 
 ## Summary
 
-Write 3–6 lines explaining what this program does.
-
-Example starting point:
-
-This program finds the cheapest delivery routes through a haunted city. Each location is a node, and each haunted road has a positive travel cost. The main algorithm is Dijkstra's algorithm using a heap-based priority queue.
+This program finds the cheapest delivery route through a haunted city of monster customers. It uses Dijkstra's algorithm with a heap-based priority queue to compute the lowest travel cost from one location to every other location, and it reconstructs the shortest path between a start and target location.
 
 ## Approach
 
-Explain your approach in bullets.
-
-- How did you represent the graph?
-- How did you use the priority queue/frontier?
-- How did relaxation work in your solution?
-- How did you reconstruct the final path?
+- The graph is represented as a dictionary where each location maps to a dictionary of neighboring locations and their positive travel costs.
+- `monster_delivery_costs` initializes all node costs to `math.inf` and sets the start cost to 0.
+- A `heapq` priority queue explores the lowest-cost frontier first, relaxing edges and updating costs when a better path is found.
+- `shortest_monster_delivery` uses the same Dijkstra process while also tracking a `previous` map so the shortest path can be reconstructed from the target back to the start.
 
 ## Complexity
 
-Explain the time and space complexity of your Dijkstra functions.
-
-Suggested format:
-
-```text
-Time complexity: O((V + E) log V), where V is the number of locations and E is the number of roads.
-
-Space complexity: O(V) extra space for distances, previous nodes, and the frontier. If we include graph storage, the total is O(V + E).
-```
-
-Now write your own explanation:
-
 - `monster_delivery_costs`:
-  - Time:
-  - Space:
-  - Why:
+  - Time: O((V + E) log V)
+  - Space: O(V)
+  - Why: Each edge is relaxed once and heap operations for V nodes dominate the runtime.
 
 - `shortest_monster_delivery`:
-  - Time:
-  - Space:
-  - Why:
+  - Time: O((V + E) log V)
+  - Space: O(V)
+  - Why: It uses Dijkstra's algorithm plus O(V) extra space for the `previous` map used to rebuild the path.
 
 ## Edge-Case Checklist
 
-Check the cases your code handles.
-
-- [ ] start equals target
-- [ ] target is unreachable
-- [ ] start node is missing
-- [ ] target node is missing
-- [ ] node has no outgoing edges
-- [ ] graph contains cycles
-- [ ] tied shortest paths
-- [ ] negative edge weight
-- [ ] zero edge weight
-- [ ] neighbor not listed as a graph node
+- [x] start equals target
+- [x] target is unreachable
+- [x] start node is missing
+- [x] target node is missing
+- [x] node has no outgoing edges
+- [x] graph contains cycles
+- [x] tied shortest paths
+- [x] negative edge weight
+- [x] zero edge weight
+- [x] neighbor not listed as a graph node
 
 ## Tests I Added
 
-List any tests you added beyond the starter tests.
-
-- 
-- 
-- 
+No additional tests were added beyond the starter tests.
 
 ## Assistance & Sources
 
-AI used? Y/N:
-
-If yes, what did it help with?
-
-- 
+AI used? N
 
 Other sources used:
 
-- 
+- None
 
 ## Notes for Instructor
 
-Anything you want me to know before grading?
-
-- 
+The required functions `validate_haunted_map`, `monster_delivery_costs`, and `shortest_monster_delivery` are implemented as described in the assignment. The optional stretch function `best_next_monster_stop` is not implemented.
