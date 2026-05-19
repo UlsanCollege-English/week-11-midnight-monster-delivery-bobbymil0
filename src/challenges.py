@@ -10,6 +10,7 @@ Rules:
 """
 
 from math import inf
+import heapq
 
 
 HAUNTED_CITY = {
@@ -53,8 +54,24 @@ def validate_haunted_map(graph: dict[str, dict[str, int]]) -> None:
     Raises:
         ValueError: If the graph is invalid.
     """
-    # TODO: Implement this function.
-    raise NotImplementedError
+    if not isinstance(graph, dict):
+        raise ValueError("Graph must be a dictionary")
+    
+    # Check all nodes and collect all neighbors
+    all_nodes = set(graph.keys())
+    
+    for node, neighbors in graph.items():
+        if not isinstance(neighbors, dict):
+            raise ValueError(f"Node {node} must map to a dictionary")
+        
+        for neighbor, weight in neighbors.items():
+            # Check if neighbor is in graph
+            if neighbor not in all_nodes:
+                raise ValueError(f"Neighbor {neighbor} not in graph")
+            
+            # Check if weight is positive
+            if weight <= 0:
+                raise ValueError(f"Edge weight from {node} to {neighbor} must be positive")
 
 
 def monster_delivery_costs(
@@ -76,8 +93,38 @@ def monster_delivery_costs(
     Raises:
         ValueError: If the graph is invalid or start is missing.
     """
-    # TODO: Implement this function.
-    raise NotImplementedError
+    if start not in graph:
+        raise ValueError(f"Start node {start} not in graph")
+    
+    # Initialize costs dictionary
+    costs = {node: inf for node in graph}
+    costs[start] = 0
+    
+    # Priority queue: (cost, node)
+    pq = [(0, start)]
+    visited = set()
+    
+    while pq:
+        current_cost, current_node = heapq.heappop(pq)
+        
+        if current_node in visited:
+            continue
+        
+        visited.add(current_node)
+        
+        # Skip if we found a better path already
+        if current_cost > costs[current_node]:
+            continue
+        
+        # Explore neighbors
+        for neighbor, weight in graph[current_node].items():
+            new_cost = current_cost + weight
+            
+            if new_cost < costs[neighbor]:
+                costs[neighbor] = new_cost
+                heapq.heappush(pq, (new_cost, neighbor))
+    
+    return costs
 
 
 def shortest_monster_delivery(
@@ -101,8 +148,58 @@ def shortest_monster_delivery(
         If target is unreachable, return (math.inf, []).
         If start equals target, return (0, [start]).
     """
-    # TODO: Implement this function.
-    raise NotImplementedError
+    # Check if start or target is missing
+    if start not in graph or target not in graph:
+        return (inf, [])
+    
+    # Handle start equals target
+    if start == target:
+        return (0, [start])
+    
+    # Initialize costs and previous nodes
+    costs = {node: inf for node in graph}
+    costs[start] = 0
+    previous = {node: None for node in graph}
+    
+    # Priority queue: (cost, node)
+    pq = [(0, start)]
+    visited = set()
+    
+    while pq:
+        current_cost, current_node = heapq.heappop(pq)
+        
+        if current_node in visited:
+            continue
+        
+        visited.add(current_node)
+        
+        # Skip if we found a better path already
+        if current_cost > costs[current_node]:
+            continue
+        
+        # Explore neighbors
+        for neighbor, weight in graph[current_node].items():
+            new_cost = current_cost + weight
+            
+            if new_cost < costs[neighbor]:
+                costs[neighbor] = new_cost
+                previous[neighbor] = current_node
+                heapq.heappush(pq, (new_cost, neighbor))
+    
+    # If target is unreachable
+    if costs[target] == inf:
+        return (inf, [])
+    
+    # Reconstruct path
+    path = []
+    current = target
+    while current is not None:
+        path.append(current)
+        current = previous[current]
+    
+    path.reverse()
+    
+    return (costs[target], path)
 
 
 def best_next_monster_stop(
